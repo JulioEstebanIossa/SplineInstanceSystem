@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SplineInstanceSystemTypes.generated.h"
 
 /**
  * @brief The axis used to determine how an object is oriented/aligned when instantiated along a spline.
@@ -15,6 +16,58 @@ enum class EOrientationAxis : uint8
 	nX = 4   UMETA(DisplayName = "-X"),
 	nY = 5   UMETA(DisplayName = "-Y"),
 	nZ = 6   UMETA(DisplayName = "-Z")
+};
+
+class FOrientationAxisHelpers
+{
+public:
+	/**
+	 * @brief Returns the axis opposite to the given one.
+	 */
+	FORCEINLINE static EOrientationAxis GetOppositeAxis(EOrientationAxis InAxis)
+	{
+		switch (InAxis)
+		{
+		case EOrientationAxis::X:
+			return EOrientationAxis::nX;
+
+		case EOrientationAxis::Y:
+			return EOrientationAxis::nY;
+
+		case EOrientationAxis::Z:
+			return EOrientationAxis::nZ;
+
+		case EOrientationAxis::nX:
+			return EOrientationAxis::X;
+
+		case EOrientationAxis::nY:
+			return EOrientationAxis::Y;
+
+		case EOrientationAxis::nZ:
+			return EOrientationAxis::Z;
+
+		default:
+			return EOrientationAxis::None;
+		}
+	}
+
+	/**
+	 * @brief Returns the display names of the given EOrientationAxis list.
+	 */
+	static TArray<TSharedPtr<FString>> GetDisplayNames(const TArray<EOrientationAxis>& Source)
+	{
+		if (UEnum* Enum = StaticEnum<EOrientationAxis>())
+		{
+			TArray<TSharedPtr<FString>> DisplayNames;
+			for (int32 i = 0; i < Source.Num(); i++)
+			{
+				uint8 CurrentSourceValue = static_cast<uint8>(Source[i]);
+				DisplayNames.Add(MakeShared<FString>(Enum->GetNameStringByValue(CurrentSourceValue)));
+			}
+			return DisplayNames;
+		}
+		return TArray<TSharedPtr<FString>>();
+	}
 };
 
 UENUM(BlueprintType)

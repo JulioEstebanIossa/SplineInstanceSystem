@@ -3,13 +3,13 @@
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
 #include "SplineInstanceSystemTypes.h"
-#include "SplinePlacementSettings.generated.h"
+#include "SplineInstantiationInfo.generated.h"
 
 /**
  * @brief Parameters for object placement along a spline.
  */
 USTRUCT(BlueprintType)
-struct FSplinePlacementSettings
+struct FSplineInstantiationInfo
 {
 	GENERATED_BODY()
 
@@ -37,9 +37,9 @@ struct FSplinePlacementSettings
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EComponentMobility::Type> Mobility = EComponentMobility::Static;
 
-	FSplinePlacementSettings() = default;
+	FSplineInstantiationInfo() = default;
 
-	FSplinePlacementSettings(EOrientationAxis InForwardAxis, EOrientationAxis InUpAxis, ESplineInstantiationMethod InInstantiationMethod,
+	FSplineInstantiationInfo(EOrientationAxis InForwardAxis, EOrientationAxis InUpAxis, ESplineInstantiationMethod InInstantiationMethod,
 		float InSectionLenght, float InSpacing = 0.0F, EComponentMobility::Type InMobility = EComponentMobility::Type::Static)
 		: ForwardAxis(InForwardAxis), UpAxis(InUpAxis), InstantiationMethod(InInstantiationMethod),
 		SectionLength(InSectionLenght), Spacing(InSpacing), Mobility(InMobility) { }

@@ -25,13 +25,18 @@ struct FSplineInstantiationInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ESplineInstantiationMethod InstantiationMethod;
 
+	/* The number of objects to instantiate along the spline. 
+	Only used if InstantiationMethod is set to an InstanceCount mode. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 InstanceCount;
+
 	/* The length of each section whitch the spline will be sliced in. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SectionLength = 100.0f;
 
 	/* Distance between instances. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Spacing = 100.0f;
+	float Spacing = 0.0f;
 
 	/* Instantiated object mobility (Static, Stationary, Movable). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

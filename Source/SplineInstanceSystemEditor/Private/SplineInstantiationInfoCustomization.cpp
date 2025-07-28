@@ -1,5 +1,6 @@
 ﻿#include "SplineInstantiationInfoCustomization.h"
 #include "IDetailChildrenBuilder.h"
+#include "IPropertyUtilities.h"
 
 // Runtime module
 #include "Types/SplineInstantiationInfo.h"
@@ -33,6 +34,7 @@ void FSplineInstantiationInfoCustomization::CustomizeChildren(TSharedRef<IProper
 
 	TSharedPtr<IPropertyHandle> ForwardAxisHandle = nullptr;
 	TSharedPtr<IPropertyHandle> UpAxisHandle = nullptr;
+	TSharedPtr<IPropertyHandle> InstantiationMethodHandle = nullptr;
 
 	// Loops on all property children to catch Forward and Up axis properties.
 	for (uint32 i = 0; i < NumChildren;	i++)
@@ -57,6 +59,35 @@ void FSplineInstantiationInfoCustomization::CustomizeChildren(TSharedRef<IProper
 				TArray<EOrientationAxis> UpAxisValidValues = FilterUpAxisOptions(ForwardAxisHandle, UpAxisHandle);
 				ValidateUpAxisValue(UpAxisHandle, UpAxisValidValues);
 				CreateUpAxisCustomView(ChildBuilder, ForwardAxisHandle, UpAxisHandle, UpAxisValidValues); // Customize UpAxis property.
+			}
+			// Catch InstantiationMethod - needed for InstanceCount customization.
+			else if (ChildName == GET_MEMBER_NAME_CHECKED(FSplineInstantiationInfo, InstantiationMethod))
+			{
+				InstantiationMethodHandle = ChildHandle;
+
+				// Set callback to update InstanceCount when InstantiationMethod changes.
+				InstantiationMethodHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateLambda([&CustomizationUtils]()
+					{
+						CustomizationUtils.GetPropertyUtilities()->ForceRefresh();
+					}));
+
+				// Then add InstantiationMethod property normally.
+				ChildBuilder.AddProperty(ChildHandle);
+			}
+			// Catch InstanceCount
+			else if (ChildName == GET_MEMBER_NAME_CHECKED(FSplineInstantiationInfo, InstanceCount))
+			{
+				// Get InstantiationMethod current value.
+				uint8 InstantiationMethodValue;
+				InstantiationMethodHandle->GetValue(InstantiationMethodValue);
+				ESplineInstantiationMethod InstantiationMethod = static_cast<ESplineInstantiationMethod>(InstantiationMethodValue);
+
+				if (InstantiationMethod == ESplineInstantiationMethod::InstanceCount_FillSpline ||
+					InstantiationMethod == ESplineInstantiationMethod::InstanceCount_AdjustSpline)
+				{
+					// Make InstanceCount property only appear if InstantiationMethod is set to an InstanceCount-method.
+					ChildBuilder.AddProperty(ChildHandle);
+				}
 			}
 			// Add other properties normally.
 			else

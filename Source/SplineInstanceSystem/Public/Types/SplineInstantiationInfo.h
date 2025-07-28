@@ -23,12 +23,12 @@ struct FSplineInstantiationInfo
 
 	/* How objects should be instantiated along the spline. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ESplineInstantiationMethod InstantiationMethod;
+	ESplineInstantiationMethod InstantiationMethod = ESplineInstantiationMethod::FillSpline;
 
 	/* The number of objects to instantiate along the spline. 
 	Only used if InstantiationMethod is set to an InstanceCount mode. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 InstanceCount;
+	int32 InstanceCount = 0;
 
 	/* The length of each section whitch the spline will be sliced in. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -44,9 +44,9 @@ struct FSplineInstantiationInfo
 
 	FSplineInstantiationInfo() = default;
 
-	FSplineInstantiationInfo(EOrientationAxis InForwardAxis, EOrientationAxis InUpAxis, ESplineInstantiationMethod InInstantiationMethod,
-		float InSectionLenght, float InSpacing = 0.0F, EComponentMobility::Type InMobility = EComponentMobility::Type::Static)
-		: ForwardAxis(InForwardAxis), UpAxis(InUpAxis), InstantiationMethod(InInstantiationMethod),
+	FSplineInstantiationInfo(EOrientationAxis InForwardAxis, EOrientationAxis InUpAxis, ESplineInstantiationMethod InInstantiationMethod, int32 InInstanceCount = 0,
+		float InSectionLenght = 100.0F, float InSpacing = 0.0F, EComponentMobility::Type InMobility = EComponentMobility::Type::Static)
+		: ForwardAxis(InForwardAxis), UpAxis(InUpAxis), InstantiationMethod(InInstantiationMethod), InstanceCount(InInstanceCount),
 		SectionLength(InSectionLenght), Spacing(InSpacing), Mobility(InMobility) { }
 };
 

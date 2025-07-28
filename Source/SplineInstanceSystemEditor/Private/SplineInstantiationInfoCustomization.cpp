@@ -82,7 +82,7 @@ void FSplineInstantiationInfoCustomization::CustomizeChildren(TSharedRef<IProper
 				InstantiationMethodHandle->GetValue(InstantiationMethodValue);
 				ESplineInstantiationMethod InstantiationMethod = static_cast<ESplineInstantiationMethod>(InstantiationMethodValue);
 
-				if (InstantiationMethod == ESplineInstantiationMethod::InstanceCount_FillSpline ||
+				if (InstantiationMethod == ESplineInstantiationMethod::InstanceCount_SplineClamp ||
 					InstantiationMethod == ESplineInstantiationMethod::InstanceCount_AdjustSpline)
 				{
 					// Make InstanceCount property only appear if InstantiationMethod is set to an InstanceCount-method.

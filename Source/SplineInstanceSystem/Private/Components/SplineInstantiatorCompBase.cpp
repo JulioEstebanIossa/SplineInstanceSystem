@@ -5,7 +5,6 @@
 USplineInstantiatorCompBase::USplineInstantiatorCompBase()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 }
 
 void USplineInstantiatorCompBase::Instantiate()
@@ -61,14 +60,14 @@ void USplineInstantiatorCompBase::Instantiate()
 		const ESplineCoordinateSpace::Type CoordinateSpace = ESplineCoordinateSpace::Type::Local;
 
 		// Calculate the current segment along the spline.
-		const FVector StartPosition = Spline->GetLocationAtDistanceAlongSpline(StartDistance, CoordinateSpace);
+		const FVector StartPosition = GetLocationAtDistanceAlongSpline(StartDistance, CoordinateSpace);
 		
-		const FVector StartTangent = Spline->GetTangentAtDistanceAlongSpline(StartDistance, CoordinateSpace)
+		const FVector StartTangent = GetTangentAtDistanceAlongSpline(StartDistance, CoordinateSpace)
 			.GetClampedToMaxSize(InstantiationSettings.SectionLength); // Tangents are clamped to SectionLenght
 		
-		const FVector EndPosition = Spline->GetLocationAtDistanceAlongSpline(EndDistance, CoordinateSpace);
+		const FVector EndPosition = GetLocationAtDistanceAlongSpline(EndDistance, CoordinateSpace);
 		
-		const FVector EndTangent = Spline->GetTangentAtDistanceAlongSpline(EndDistance, CoordinateSpace)
+		const FVector EndTangent = GetTangentAtDistanceAlongSpline(EndDistance, CoordinateSpace)
 			.GetClampedToMaxSize(InstantiationSettings.SectionLength); // Tangents are clamped to SectionLenght
 
 		// Each child class will implement its own version of the method.
@@ -80,22 +79,17 @@ void USplineInstantiatorCompBase::Instantiate()
 void USplineInstantiatorCompBase::ClearInstances()
 {
 	for (int32 i = 0; i < Instances.Num(); i++)
-	{	
+	{
 		// Each child class will implement its own version of the method.
 		DestroyInstance(Instances[i]);
 	}
 	Instances.Empty();
 }
 
-void USplineInstantiatorCompBase::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 int32 USplineInstantiatorCompBase::GetSectionsCount() const
 {
 	// The maximum number of sections that fit inside the spline.
-	const int32 SplineMaxSections = static_cast<int32>(Spline->GetSplineLength() / InstantiationSettings.SectionLength);
+	const int32 SplineMaxSections = static_cast<int32>(GetSplineLength() / InstantiationSettings.SectionLength);
 
 	switch (InstantiationSettings.InstantiationMethod)
 	{

@@ -1,17 +1,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "Components/SplineComponent.h"
 #include "Types/SplineInstantiationInfo.h"
 #include "Types/SplineSegmentInfo.h"
 #include "SplineInstantiatorCompBase.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSplineInstantiator, Log, All);
 
-class USplineComponent;
-
+/**
+ * @brief The base class for all components that aim to instantiate objects along a spline.
+ */
 UCLASS(Abstract)
-class SPLINEINSTANCESYSTEM_API USplineInstantiatorCompBase : public UActorComponent
+class SPLINEINSTANCESYSTEM_API USplineInstantiatorCompBase : public USplineComponent
 {
 	GENERATED_BODY()
 
@@ -21,10 +22,6 @@ public:
 	FSplineInstantiationInfo InstantiationSettings;
 
 protected:
-	/* The main spline along which objects will be placed. */
-	UPROPERTY(BlueprintReadOnly, Category = "SplineInstantiationSystem")
-	USplineComponent* Spline;
-
 	/* The objects instantiated by this component. */
 	UPROPERTY(BlueprintReadOnly, Category = "SplineInstantiationSystem")
 	TArray<UObject*> Instances;
@@ -35,16 +32,16 @@ public:
 	/**
 	 * @brief Generates instances along the spline based on the selected InstantiationMethod.
 	 */
+	UFUNCTION(BlueprintCallable, Category = "SplineInstantiationSystem")
 	void Instantiate();
 
 	/**
 	 * @brief Delete all generated instances.
 	 */
+	UFUNCTION(BlueprintCallable, Category = "SplineInstantiationSystem")
 	void ClearInstances();
 
 protected:
-	virtual void BeginPlay() override;
-
 	/**
 	 * @brief Returns the number of sections the spline will be divided into, based on the InstantiationMethod.
 	 */
@@ -58,7 +55,7 @@ protected:
 	 * @param SplineSegment The spline segment along which the generated object will be positioned.
 	 * @return The generated object.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "SplineInstantiationSystem")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "SplineInstantiationSystem")
 	UObject* GenerateInstance(const FSplineSegmentInfo& SplineSegment);
 	virtual UObject* GenerateInstance_Implementation(const FSplineSegmentInfo& SplineSegment) { return nullptr; }
 
@@ -68,7 +65,7 @@ protected:
 	 * Child classes must override this function to specify their own behavior.
 	 * @param Instance The instance to destroy.
 	 */
-	UFUNCTION(BlueprintNativeEvent, Category = "SplineInstantiationSystem")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "SplineInstantiationSystem")
 	void DestroyInstance(UObject* Instance);
 	virtual void DestroyInstance_Implementation(UObject* Instance) { }
 };

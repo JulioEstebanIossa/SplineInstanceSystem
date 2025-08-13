@@ -2,6 +2,8 @@
 #include "IDetailChildrenBuilder.h"
 #include "IPropertyUtilities.h"
 
+#include "Async/Async.h"
+
 // Runtime module
 #include "Types/SplineInstantiationInfo.h"
 #include "Types/SplineInstanceSystemTypes.h"
@@ -162,7 +164,10 @@ void FSplineInstantiationInfoCustomization::ResetUpAxisValue(TSharedPtr<IPropert
 {
 	if (UpAxisHandle.IsValid())
 	{
-		UpAxisHandle->SetValue(static_cast<uint8>(EOrientationAxis::None));
+		AsyncTask(ENamedThreads::GameThread, [UpAxisHandle]()
+			{
+				UpAxisHandle->SetValue(static_cast<uint8>(EOrientationAxis::None));
+			});
 	}
 }
 
@@ -201,7 +206,7 @@ void FSplineInstantiationInfoCustomization::CreateUpAxisCustomView(IDetailChildr
 								UpAxisHandle->SetValue(NewValue);
 							}
 						})
-					.InitiallySelectedItem(UpAxisComboBoxOptions.Num() > 0 ? UpAxisComboBoxOptions[0] : nullptr)
+					.InitiallySelectedItem(UpAxisComboBoxOptions.Num() >= 0 ? UpAxisComboBoxOptions[0] : nullptr)
 					[
 						SNew(STextBlock)
 							.Text_Lambda([UpAxisHandle, Enum]()
